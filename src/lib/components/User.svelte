@@ -19,3 +19,12 @@
 {:else}
 	<button class="btn blue" onclick={() => goto(loginUrl)}> Login </button>
 {/if}
+
+<style>
+	a {
+		overflow: hidden;
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+	}
+</style>

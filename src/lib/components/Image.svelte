@@ -24,9 +24,8 @@
 
 <style>
 	img {
-		width: 50px;
-		height: 50px;
-		border-radius: 50%;
+		width: 100%;
+		height: auto;
 		object-fit: cover;
 	}
 </style>

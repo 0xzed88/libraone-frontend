@@ -1,5 +1,6 @@
 <script>
 	import { resolve } from '$app/paths';
+	import Gite from '$lib/assets/svg/gite.svelte';
 </script>
 
 <nav class="links">
@@ -11,6 +12,10 @@
 	<a class="card" href={resolve('/events')}>
 		<span>📅</span>
 		<p>Events</p>
+	</a>
+	<a class="card" href={resolve('/map')}>
+		<Gite />
+		<p>Map</p>
 	</a>
 </nav>
 
@@ -33,6 +38,7 @@
 		color: inherit;
 		transition: 0.2s ease;
 		min-width: 120px;
+		justify-content: center;
 	}
 
 	.card:hover {

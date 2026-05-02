@@ -15,18 +15,18 @@ export const ProfileCreds = {
 };
 
 const fetchOnlineUsers = async () => {
-	if (!ProfileCreds.value) return {};
+	if (!ProfileCreds.value) return [{}, {}];
 	const onlineResp = await fetch('https://mapl.zone01oujda.ma/online', {
 		method: 'GET',
 		headers: { 'X-TOKEN': ProfileCreds.value.token }
 	});
-	if (!onlineResp.ok) return {};
+	if (!onlineResp.ok) return [{}, {}];
 	const busyPosts: Record<string, string> = await onlineResp.json();
-	const onlineUsers: Record<string, string> = {};
+	const onlineUsers: Record<string, string | undefined> = {};
 	for (const post in busyPosts) {
 		onlineUsers[busyPosts[post]] = post;
 	}
-	return onlineUsers;
+	return [onlineUsers, busyPosts];
 };
 
-export const OnlineUsers = await fetchOnlineUsers();
+export const [OnlineUsers, BusyPosts] = await fetchOnlineUsers();
