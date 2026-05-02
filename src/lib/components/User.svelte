@@ -1,21 +1,21 @@
 <script lang="ts">
-	let loggedIn = $state(false);
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { ProfileCreds } from '$lib/state/linked-profile';
+	import Image from './Image.svelte';
+	const profile = ProfileCreds.value;
+	const loginUrl = resolve('/login');
 </script>
 
-{#if !loggedIn}
-	<button class="btn btn-blue"> Login </button>
+{#if profile}
+	{@const username = profile.username}
+	<a href={loginUrl}>
+		<Image
+			src={`https://mapl.zone01oujda.ma/image/map/${username}`}
+			alt={username}
+			headers={{ 'X-TOKEN': profile.token }}
+		/>
+	</a>
+{:else}
+	<button class="btn blue" onclick={() => goto(loginUrl)}> Login </button>
 {/if}
-
-<style lang="postcss">
-	@reference "tailwindcss";
-	.btn {
-		cursor: pointer;
-		@apply rounded px-4 py-2 font-bold;
-	}
-	.btn-blue {
-		background: var(--bg-3);
-	}
-	.btn-blue:hover {
-		@apply bg-blue-700;
-	}
-</style>

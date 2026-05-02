@@ -125,3 +125,39 @@ select {
 *::after {
 	box-sizing: border-box;
 }
+
+@keyframes fade-up {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.divider {
+	height: 1px;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		hsla(215, 40%, 70%, 0.12) 30%,
+		hsla(215, 40%, 70%, 0.12) 70%,
+		transparent
+	);
+	margin-bottom: 1.5rem;
+}
+
+.btn {
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	@apply rounded px-4 py-2 font-bold;
+
+	&.blue {
+		@apply bg-blue-700;
+	}
+}

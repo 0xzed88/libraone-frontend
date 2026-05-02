@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { OnlineUsers } from '$lib/state/linked-profile';
 	import { recordsMap } from '$lib/state/users';
 	import type { EventUserRel } from '$lib/types/events';
 	import type { User } from '$lib/types/user';
@@ -8,6 +9,8 @@
 	let { user, eventUserRel }: { user: User; eventUserRel: EventUserRel | undefined } = $props();
 	const level = $derived(eventUserRel?.level);
 	const auditRatio = $derived(eventUserRel?.userAuditRatio);
+
+	const post = $derived(user.login ? OnlineUsers[user.login] : null);
 </script>
 
 <article class="user-card">
@@ -32,12 +35,14 @@
 				</svg>
 			</div>
 		</div>
-
 		<div class="user-meta">
 			<div class="title-row">
 				<h2 class="login">
 					<a href={resolve(`/users/${user.id}`)} class="login-link">{user.login}</a>
 				</h2>
+				{#if post}
+					<div class="online-badge" data-tooltip="Online"></div>
+				{/if}
 				{#if level}
 					<span class="user-level" data-level={level} data-tooltip="Level {level}">
 						{level}
@@ -58,7 +63,7 @@
 		</div>
 		<div>
 			<dt>last online</dt>
-			<dd>-</dd>
+			<dd>{post ?? '-'}</dd>
 			<dt>audit ratio</dt>
 			<dd>{auditRatio ? Number(auditRatio).toFixed(2) : '_'}</dd>
 		</div>
@@ -93,6 +98,36 @@
 </article>
 
 <style>
+	@keyframes pulse-online {
+		0% {
+			box-shadow:
+				0 0 0 0 hsla(140, 80%, 55%, 0.55),
+				0 0 12px hsla(140, 80%, 55%, 0.65);
+		}
+		70% {
+			box-shadow:
+				0 0 0 8px hsla(140, 80%, 55%, 0),
+				0 0 18px hsla(140, 80%, 55%, 0.35);
+		}
+		100% {
+			box-shadow:
+				0 0 0 0 hsla(140, 80%, 55%, 0),
+				0 0 12px hsla(140, 80%, 55%, 0.65);
+		}
+	}
+
+	.online-badge {
+		width: 1rem;
+		height: 1rem;
+		border-radius: 50%;
+		background: hsl(140, 75%, 50%);
+		border: 3px solid hsl(220, 18%, 12%);
+		box-shadow:
+			0 0 0 2px hsla(140, 80%, 50%, 0.15),
+			0 0 12px hsla(140, 80%, 55%, 0.65);
+		z-index: 2;
+		animation: pulse-online 2s infinite;
+	}
 	.login-link {
 		color: inherit;
 		text-decoration: none;
@@ -210,7 +245,25 @@
 		gap: 0.5rem;
 		min-width: 0;
 		width: 100%;
-		justify-content: space-between;
+		/* justify-content: space-between; */
+
+		.user-level {
+			display: inline-flex;
+			align-items: center;
+			padding: 0.2rem 0.55rem;
+			border-radius: 9999px;
+			font-size: 0.7rem;
+			font-weight: 700;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+			border: 1px solid hsla(210, 70%, 60%, 0.2);
+			background: hsla(210, 70%, 60%, 0.12);
+			color: hsl(210, 70%, 75%);
+			white-space: nowrap;
+			flex-shrink: 0;
+
+			margin-left: auto;
+		}
 	}
 
 	.login {
@@ -229,22 +282,6 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		color: hsl(215, 15%, 50%);
-	}
-
-	.user-level {
-		display: inline-flex;
-		align-items: center;
-		padding: 0.2rem 0.55rem;
-		border-radius: 9999px;
-		font-size: 0.7rem;
-		font-weight: 700;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		border: 1px solid hsla(210, 70%, 60%, 0.2);
-		background: hsla(210, 70%, 60%, 0.12);
-		color: hsl(210, 70%, 75%);
-		white-space: nowrap;
-		flex-shrink: 0;
 	}
 
 	.details {
