@@ -4,11 +4,6 @@
 </script>
 
 <nav class="links">
-	<a class="card" href={resolve('/eventsTree')}>
-		<span>🌳</span>
-		<p>Event Tree</p>
-	</a>
-
 	<a class="card" href={resolve('/events')}>
 		<span>📅</span>
 		<p>Events</p>
