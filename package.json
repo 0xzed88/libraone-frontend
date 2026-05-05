@@ -74,6 +74,7 @@
 		"embla-carousel": "^8.6.0",
 		"flowbite-svelte": "^1.33.1",
 		"github-markdown-css": "^5.9.0",
-		"graphql-request": "^7.4.0"
+		"graphql-request": "^7.4.0",
+		"jwt-decode": "^4.0.0"
 	}
 }

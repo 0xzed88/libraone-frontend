@@ -1,0 +1,6 @@
+query GetUserProfile($userId: Int) {
+	profile: user_public_view(where: { id: { _eq: $userId } }) {
+		avatarUrl
+		login
+	}
+}

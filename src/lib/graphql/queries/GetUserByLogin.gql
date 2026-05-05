@@ -1,0 +1,5 @@
+query GetUserByLogin($userLogin: String) {
+	user_public_view(where: { login: { _eq: $userLogin } }) {
+		...PublicUserFields
+	}
+}

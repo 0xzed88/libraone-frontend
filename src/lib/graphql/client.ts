@@ -1,7 +1,7 @@
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 import { intraUserState } from '$lib/stores/user.svelte';
-import { GraphQLClient } from 'graphql-request';
+import { ClientError, GraphQLClient } from 'graphql-request';
 import { get } from 'svelte/store';
 
 export const Client = new GraphQLClient(
@@ -12,11 +12,20 @@ const originalRequest = Client.request.bind(Client);
 
 const patchedRequest = async (...args: Parameters<typeof Client.request>) => {
 	try {
-		Client.setHeader('Authorization', `Bearer ${get(intraUserState).jwt}`);
+		Client.setHeader('Authorization', `Bearer ${get(intraUserState)?.jwt}`);
 		return await originalRequest(...args);
 	} catch (error) {
-		console.log('error');
-		goto(resolve('/login/intra'));
+		if (error instanceof ClientError) {
+			const { body, headers } = error.response;
+			if (headers.get('content-type')?.includes('application/json')) {
+				const json = JSON.parse(body);
+				if (json.errors?.length > 0) {
+					goto(resolve('/login/intra'));
+					throw error;
+				}
+			}
+		}
+
 		throw error;
 	}
 };

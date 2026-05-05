@@ -1,0 +1,5 @@
+query GetUserById($userId: Int) {
+	user_public_view(where: { id: { _eq: $userId } }) {
+		...PublicUserFields
+	}
+}

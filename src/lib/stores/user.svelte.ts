@@ -1,22 +1,27 @@
 import { writable } from 'svelte/store';
 
-const INTRA_KEY_STORAGE = 'intra_jwt';
-const jwt = localStorage.getItem(INTRA_KEY_STORAGE);
-export const intraUserState = writable({ jwt, user: null });
+const INTRA_KEY_STORAGE = 'intra_creds';
+const intraCreds = localStorage.getItem(INTRA_KEY_STORAGE);
+export interface IntraCreds {
+	jwt: string;
+	userId: number;
+}
+export const intraUserState = writable<IntraCreds | null>(
+	intraCreds ? JSON.parse(intraCreds) : null
+);
 intraUserState.subscribe((v) => {
-	console.log(v);
-	if (v.jwt) localStorage.setItem(INTRA_KEY_STORAGE, v.jwt);
+	if (v) localStorage.setItem(INTRA_KEY_STORAGE, JSON.stringify(v));
 });
 
-export interface ProfileUser {
+export interface ProfileCreds {
 	username: string;
 	role: string;
 	token: string;
 }
-const PROFILE_KEY_STORAGE = 'profile_jwt';
-const profileUser = localStorage.getItem(PROFILE_KEY_STORAGE);
-export const profileUserState = writable<ProfileUser | null>(
-	profileUser ? JSON.parse(profileUser) : null
+const PROFILE_KEY_STORAGE = 'profile_creds';
+const profileCreds = localStorage.getItem(PROFILE_KEY_STORAGE);
+export const profileUserState = writable<ProfileCreds | null>(
+	profileCreds ? JSON.parse(profileCreds) : null
 );
 
 profileUserState.subscribe((v) => {

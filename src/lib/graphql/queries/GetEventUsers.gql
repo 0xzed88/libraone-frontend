@@ -35,15 +35,7 @@ query GetEventUsers(
 			limit: $limit
 		) {
 			publicUser {
-				id
-				login
-				avatarUrl
-				firstName
-				lastName
-				canBeAuditor
-				canAccessPlatform
-				campus
-				githubId
+				...PublicUserFields
 			}
 			createdAt
 			userAuditRatio
