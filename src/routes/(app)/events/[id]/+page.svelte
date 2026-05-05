@@ -25,6 +25,7 @@
 
 <style>
 	.rootEvents {
+		overflow: scroll;
 		padding: 20px;
 	}
 </style>
