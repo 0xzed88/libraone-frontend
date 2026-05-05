@@ -1,8 +1,25 @@
+function getScrollParent(el: HTMLElement | null): HTMLElement | null {
+	while (el) {
+		const style = getComputedStyle(el);
+		const overflowY = style.overflowY;
+		const canScroll = overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay';
+
+		if (canScroll && el.scrollHeight > el.clientHeight) {
+			return el;
+		}
+
+		el = el.parentElement;
+	}
+
+	return null;
+}
+
 export function infiniteScroll<T>(sentinel: HTMLElement, callback: () => T | Promise<T>) {
-	const parent = sentinel.parentElement;
+	const root = getScrollParent(sentinel);
+
 	const observer = new IntersectionObserver(
-		(entries) => {
-			entries.forEach(async (entry) => {
+		async (entries) => {
+			for (const entry of entries) {
 				if (entry.isIntersecting) {
 					try {
 						await callback();
@@ -11,9 +28,12 @@ export function infiniteScroll<T>(sentinel: HTMLElement, callback: () => T | Pro
 						entry.target.remove();
 					}
 				}
-			});
+			}
 		},
-		{ root: parent, threshold: 0 }
+		{
+			root,
+			threshold: 0
+		}
 	);
 
 	observer.observe(sentinel);

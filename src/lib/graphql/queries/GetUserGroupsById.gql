@@ -1,0 +1,10 @@
+query GetUserGroupsById($userId: Int, $offset: Int, $limit: Int) {
+	group_user(
+		where: { id: { _eq: $userId } }
+		offset: $offset
+		limit: $limit
+		order_by: { id: desc }
+	) {
+		...UserGroupFields
+	}
+}

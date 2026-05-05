@@ -11,6 +11,7 @@
 	import LogtimeSection from '$lib/components/profile/LogtimeSection.svelte';
 	import type { PageDataBundle } from '$lib/types/profile';
 	import { formatDateInput } from '$lib/utils/time';
+	import UserGroupsList from '$lib/components/GroupList.svelte';
 
 	const { params }: PageProps = $props();
 
@@ -89,6 +90,7 @@
 	{:catch err}
 		<NotFoundState icon="⚠" title="Failed to load user data" detail={err.message} />
 	{/await}
+	<UserGroupsList userId={params.id} />
 </div>
 
 <style>
