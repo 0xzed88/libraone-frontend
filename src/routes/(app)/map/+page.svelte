@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import Image from '$lib/components/Image.svelte';
-	import { BusyPosts, ProfileCreds } from '$lib/state/linked-profile';
-	const profile = ProfileCreds.value;
+	import { profileUserState } from '$lib/stores/user.svelte';
+	import { get } from 'svelte/store';
 	const columns = 2;
 	const campusPreffix = 'b1f1';
 	const blocks = [
@@ -17,6 +19,26 @@
 		if (!searchQuery.trim() || !username) return false;
 		return username.toLowerCase().includes(searchQuery.toLowerCase().trim());
 	};
+
+	const fetchOnlineUsers = async () => {
+		const onlineResp = await fetch('https://mapl.zone01oujda.ma/online', {
+			method: 'GET',
+			headers: { 'X-TOKEN': `${get(profileUserState)?.token}` }
+		});
+		if (onlineResp.status === 403) {
+			goto(resolve('/login/profile'));
+			return [{}, {}];
+		}
+
+		const busyPosts: Record<string, string> = await onlineResp.json();
+		const onlineUsers: Record<string, string | undefined> = {};
+		for (const post in busyPosts) {
+			onlineUsers[busyPosts[post]] = post;
+		}
+		return [onlineUsers, busyPosts];
+	};
+
+	const [, BusyPosts] = await fetchOnlineUsers();
 </script>
 
 <div class="search-bar">
@@ -45,11 +67,11 @@
 									{@const postId = `${campusPreffix}r${row}s${postNumber}`}
 									{@const username = BusyPosts[postId]}
 									<div class="post" data-post={postId} data-highlighted={matchesSearch(username)}>
-										{#if username && profile}
+										{#if username}
 											<Image
 												src={`https://mapl.zone01oujda.ma/image/map/${username}`}
 												alt={username}
-												headers={{ 'X-TOKEN': profile.token }}
+												headers={{ 'X-TOKEN': `${get(profileUserState)?.token}` }}
 											/>
 										{/if}
 									</div>

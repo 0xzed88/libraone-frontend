@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { OnlineUsers } from '$lib/state/linked-profile';
+	import { onlineUsers } from '$lib/stores/onlineUsers.svelte';
 	import type { EventPublicUser, EventUserRel } from '$lib/types/events';
 	import { formatDate, timeUntil } from '$lib/utils/time';
 
@@ -14,7 +14,7 @@
 	const level = $derived(eventUserRel?.level);
 	const auditRatio = $derived(eventUserRel?.userAuditRatio);
 
-	const post = $derived(user.login ? OnlineUsers[user.login] : null);
+	const post = $derived(user.login ? onlineUsers[user.login] : null);
 </script>
 
 <article class="user-card">

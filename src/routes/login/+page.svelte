@@ -13,7 +13,7 @@
 
 	<div class="grid-overlay" aria-hidden="true"></div>
 	<PanelCard wordmark="Link Accounts">
-		<button class="btn btn-intra" onclick={() => goto(resolve('/login'))} disabled>
+		<button class="btn btn-intra" onclick={() => goto(resolve('/login/intra'))}>
 			<span class="btn-icon">
 				<img src={intra} alt="intra" />
 			</span>
