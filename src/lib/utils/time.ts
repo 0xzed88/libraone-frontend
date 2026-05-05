@@ -36,3 +36,24 @@ export function timeUntil(dateStr: string): string {
 
 	return parts.length ? parts.join(' ') : 'Today';
 }
+
+export function fmtSeconds(s: number): string {
+	if (!s) return '0h';
+	const h = Math.floor(s / 3600);
+	const m = Math.floor((s % 3600) / 60);
+	return h > 0 ? `${h}h ${m > 0 ? m + 'm' : ''}`.trim() : `${m}m`;
+}
+
+export function monthLabel(key: string): string {
+	const [y, mo] = key.split('-');
+	return new Date(+y, +mo - 1, 1).toLocaleString('default', { month: 'short' });
+}
+
+export function sessionDuration(start: string, end: string): string {
+	const diff = (new Date(end).getTime() - new Date(start).getTime()) / 1000;
+	return fmtSeconds(diff);
+}
+
+export function formatDateInput(d: Date): string {
+	return d.toISOString().slice(0, 10);
+}
