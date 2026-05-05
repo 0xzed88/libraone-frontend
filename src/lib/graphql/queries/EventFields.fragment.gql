@@ -1,0 +1,23 @@
+fragment EventFields on event {
+	id
+	path
+	createdAt
+	startAt
+	endAt
+	parentId
+	object {
+		authorId
+		type
+		name
+	}
+	children: children_aggregate {
+		count: aggregate {
+			total: count
+		}
+	}
+	users: users_aggregate {
+		count: aggregate {
+			total: count
+		}
+	}
+}

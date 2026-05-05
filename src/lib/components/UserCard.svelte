@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { OnlineUsers } from '$lib/state/linked-profile';
-	import { recordsMap } from '$lib/state/users';
-	import type { EventUserRel } from '$lib/types/events';
-	import type { User } from '$lib/types/user';
+	import type { EventPublicUser, EventUserRel } from '$lib/types/events';
 	import { formatDate, timeUntil } from '$lib/utils/time';
 
-	let { user, eventUserRel }: { user: User; eventUserRel: EventUserRel | undefined } = $props();
+	const recordsMap = new Map();
+	interface Props {
+		user: EventPublicUser;
+		eventUserRel?: EventUserRel;
+		link?: boolean;
+	}
+	let { user, eventUserRel, link = true }: Props = $props();
 	const level = $derived(eventUserRel?.level);
 	const auditRatio = $derived(eventUserRel?.userAuditRatio);
 
@@ -38,7 +42,11 @@
 		<div class="user-meta">
 			<div class="title-row">
 				<h2 class="login">
-					<a href={resolve(`/users/${user.id}`)} class="login-link">{user.login}</a>
+					{#if link}
+						<a href={resolve(`/users/${user.id}`)} class="login-link">{user.login}</a>
+					{:else}
+						<span>{user.login}</span>
+					{/if}
 				</h2>
 				{#if post}
 					<div class="online-badge" data-tooltip="Online"></div>

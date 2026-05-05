@@ -1,30 +1,27 @@
 <script lang="ts">
 	import EventList from '$lib/components/EventList.svelte';
-	import { eventsMap } from '$lib/state/events';
-	import type { Event } from '$lib/types/events';
+	import { Client } from '$lib/graphql/client';
+	import { GetEventChildrenDocument } from '$lib/graphql/generated';
 	import type { PageProps } from './$types';
-
 	const { params }: PageProps = $props();
 
-	const getEventChildren = (ev: Event) => {
-		const children: Event[] = [];
-		ev.children.forEach((child) => {
-			const childEvent = eventsMap.get(child.id);
-			if (childEvent) children.push(childEvent);
+	const getChildEvents = async () => {
+		const { childEvents } = await Client.request(GetEventChildrenDocument, {
+			eventId: +params.id,
+			limit: Infinity,
+			offset: 0
 		});
-		return children;
+		return childEvents;
 	};
-
-	const parentEvent = $derived(eventsMap.get(+params.id));
 </script>
 
-{#if parentEvent}
-	<div class="rootEvents">
-		<EventList events={getEventChildren(parentEvent)} />
-	</div>
-{:else}
-	Event #{params.id} not found
-{/if}
+<div class="rootEvents">
+	{#await getChildEvents()}
+		loading...
+	{:then events}
+		<EventList {events} />
+	{/await}
+</div>
 
 <style>
 	.rootEvents {

@@ -1,0 +1,13 @@
+query GetUser($userId: Int) {
+	user_public_view(where: { id: { _eq: $userId } }) {
+		id
+		login
+		avatarUrl
+		firstName
+		lastName
+		canBeAuditor
+		canAccessPlatform
+		campus
+		githubId
+	}
+}

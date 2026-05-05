@@ -1,14 +1,25 @@
 <script lang="ts">
 	import EventList from '$lib/components/EventList.svelte';
-	import { rootEvents } from '$lib/state/events';
+	import { Client } from '$lib/graphql/client';
+	import { GetRootEventsDocument } from '$lib/graphql/generated';
+
+	const getRootEvents = async () => {
+		const { rootEvents } = await Client.request(GetRootEventsDocument);
+		return rootEvents;
+	};
 </script>
 
 <div class="rootEvents">
-	<EventList events={rootEvents} />
+	{#await getRootEvents()}
+		<div>loading ....</div>
+	{:then rootEvents}
+		<EventList events={rootEvents} />
+	{/await}
 </div>
 
 <style>
 	.rootEvents {
+		overflow: scroll;
 		padding: 20px;
 	}
 </style>

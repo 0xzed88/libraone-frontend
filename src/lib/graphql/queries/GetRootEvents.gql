@@ -1,0 +1,5 @@
+query GetRootEvents {
+	rootEvents: event(where: { parentId: { _is_null: true } }, order_by: { endAt: desc }) {
+		...EventFields
+	}
+}

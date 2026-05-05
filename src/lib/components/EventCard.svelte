@@ -34,8 +34,8 @@
 
 	const status = $derived(getStatus(event.startAt, event.endAt));
 	const progress = $derived(getProgress(event.startAt, event.endAt));
-	const userCount = $derived(event.usersRelation.length);
-	const childCount = $derived(event.children.length);
+	const userCount = $derived(event.users.count?.total ?? 0);
+	const childCount = $derived(event.children.count?.total ?? 0);
 </script>
 
 <article class="card" class:leaf={variant === 'leaf'} data-status={status}>

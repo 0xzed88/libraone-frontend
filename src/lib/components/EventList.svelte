@@ -1,7 +1,6 @@
 <script lang="ts">
 	import EventCard from '$lib/components/EventCard.svelte';
 	import Carousel from './Carousel.svelte';
-	import { eventsMap } from '$lib/state/events';
 	import type { Event } from '$lib/types/events';
 
 	const { events }: { events: Event[] } = $props();
@@ -25,14 +24,9 @@
 			<header class="group-header">{path}</header>
 
 			<Carousel>
-				{#each group as { id } (id)}
-					{@const event = eventsMap.get(id)}
+				{#each group as event (event.id)}
 					<div class="event embla__slide">
-						{#if event}
-							<EventCard {event} />
-						{:else}
-							Events #{id} Not Found
-						{/if}
+						<EventCard {event} />
 					</div>
 				{/each}
 			</Carousel>
