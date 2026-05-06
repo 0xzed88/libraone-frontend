@@ -32,4 +32,7 @@
 </button>
 
 <style>
+	button {
+		cursor: pointer;
+	}
 </style>
