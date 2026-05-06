@@ -78,7 +78,7 @@ ${auditors.join('\n')}`;
 					? g.group.captainId === +userId
 					: g.group.captainLogin === userId}
 
-				<article class="group-card" data-accepted={g.accepted}>
+				<article class="group-card">
 					<div class="accent-bar"></div>
 
 					<div class="card-body">
@@ -91,11 +91,6 @@ ${auditors.join('\n')}`;
 							</div>
 
 							<div class="badges">
-								{#if !g.accepted}
-									<span class="badge badge-pending">Pending</span>
-								{:else}
-									<span class="badge badge-accepted">Accepted</span>
-								{/if}
 								{#if isCaptain}
 									<span class="badge badge-captain" data-tooltip="Group captain">⚑ Captain</span>
 								{/if}
@@ -252,10 +247,6 @@ ${auditors.join('\n')}`;
 		background: hsl(213, 40%, 28%);
 	}
 
-	.group-card[data-accepted='false'] .accent-bar {
-		background: #fbbf24;
-	}
-
 	.card-body {
 		flex: 1;
 		padding: 14px 16px;
@@ -316,16 +307,6 @@ ${auditors.join('\n')}`;
 		white-space: nowrap;
 	}
 
-	.badge-pending {
-		background: hsl(38, 60%, 12%);
-		color: #fbbf24;
-		border: 1px solid hsl(38, 60%, 22%);
-	}
-	.badge-accepted {
-		background: hsl(158, 60%, 11%);
-		color: #6ee7b7;
-		border: 1px solid hsl(158, 50%, 20%);
-	}
 	.badge-captain {
 		background: hsl(45, 70%, 12%);
 		color: hsl(45, 85%, 65%);

@@ -1,7 +1,6 @@
 fragment UserGroupFields on group_user {
 	id
 	userLogin
-	accepted
 	group {
 		captainId
 		captainLogin
@@ -16,7 +15,6 @@ fragment UserGroupFields on group_user {
 			id
 			closedAt
 			closureType
-			closureMessage
 			auditor {
 				...PublicUserFields
 			}
