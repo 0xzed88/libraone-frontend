@@ -12,6 +12,7 @@
 		avatarUrl?: string | null;
 	}
 	const { avatarUrl, userLogin }: Props = $props();
+	const profileToken = $derived(get(profileUserState)?.token);
 
 	let error = $state(false);
 </script>
@@ -21,12 +22,16 @@
 		<Person />
 	{:else}
 		<FallbackImage src={avatarUrl}>
-			<Image
-				src={`https://mapl.zone01oujda.ma/image/map/${userLogin}`}
-				alt={userLogin}
-				headers={{ 'X-TOKEN': `${get(profileUserState)?.token}` }}
-				onerror={() => (error = true)}
-			/>
+			{#if profileToken}
+				<Image
+					src={`https://mapl.zone01oujda.ma/image/map/${userLogin}`}
+					alt={userLogin}
+					headers={{ 'X-TOKEN': `${profileToken}` }}
+					onerror={() => (error = true)}
+				/>
+			{:else}
+				<Person />
+			{/if}
 		</FallbackImage>
 	{/if}
 </button>

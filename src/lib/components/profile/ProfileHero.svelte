@@ -1,15 +1,11 @@
 <script lang="ts">
-	import FallbackImage from '$lib/components/image/FallbackImage.svelte';
-	import Image from '$lib/components/image/Image.svelte';
-	import { profileUserState } from '$lib/stores/user.svelte';
-	import { get } from 'svelte/store';
-	import type { PublicUserFieldsFragment } from '$lib/graphql/generated';
-	import { fmtSeconds } from '$lib/utils/time';
-	import type { MaplProfile, LogtimeData } from '$lib/types/profile';
+	import CheckMark from '$lib/assets/svg/check-mark.svelte';
 	import Discord from '$lib/assets/svg/discord.svelte';
 	import Location from '$lib/assets/svg/location.svelte';
-	import CheckMark from '$lib/assets/svg/check-mark.svelte';
 	import Search from '$lib/assets/svg/search.svelte';
+	import type { PublicUserFieldsFragment } from '$lib/graphql/generated';
+	import type { LogtimeData, MaplProfile } from '$lib/types/profile';
+	import { fmtSeconds } from '$lib/utils/time';
 	import UserAvatar from '../image/UserAvatar.svelte';
 
 	interface Props {
@@ -152,6 +148,10 @@
 	.avatar-wrap {
 		position: relative;
 		flex-shrink: 0;
+		width: 100px;
+		height: 100px;
+		overflow: hidden;
+
 		:global(img) {
 			width: 82px;
 			height: 82px;
