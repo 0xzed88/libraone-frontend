@@ -1,6 +1,6 @@
 <script lang="ts">
-	import FallbackImage from '$lib/components/FallbackImage.svelte';
-	import Image from '$lib/components/Image.svelte';
+	import FallbackImage from '$lib/components/image/FallbackImage.svelte';
+	import Image from '$lib/components/image/Image.svelte';
 	import { profileUserState } from '$lib/stores/user.svelte';
 	import { get } from 'svelte/store';
 	import type { PublicUserFieldsFragment } from '$lib/graphql/generated';
@@ -10,6 +10,7 @@
 	import Location from '$lib/assets/svg/location.svelte';
 	import CheckMark from '$lib/assets/svg/check-mark.svelte';
 	import Search from '$lib/assets/svg/search.svelte';
+	import UserAvatar from '../image/UserAvatar.svelte';
 
 	interface Props {
 		profile?: MaplProfile | null;
@@ -42,18 +43,7 @@
 	<div class="hero-glow"></div>
 
 	<div class="avatar-wrap">
-		{#if user.avatarUrl}
-			<div class="avatar">
-				<FallbackImage src={user.avatarUrl} alt={user.login}>
-					<Image
-						src={`https://mapl.zone01oujda.ma/image/map/${user.login}`}
-						alt={user.login}
-						headers={{ 'X-TOKEN': `${get(profileUserState)?.token}` }}
-					/>
-				</FallbackImage>
-			</div>
-		{/if}
-
+		<UserAvatar avatarUrl={user.avatarUrl} userLogin={user.login} />
 		{#if profile?.location}
 			<span class="online-dot" data-tooltip="Active"></span>
 		{/if}
@@ -162,16 +152,17 @@
 	.avatar-wrap {
 		position: relative;
 		flex-shrink: 0;
+		:global(img) {
+			width: 82px;
+			height: 82px;
+			border-radius: 50%;
+			border: 2px solid hsla(215, 40%, 70%, 0.15);
+			object-fit: cover;
+			display: block;
+			overflow: hidden;
+		}
 	}
-	.avatar {
-		width: 82px;
-		height: 82px;
-		border-radius: 50%;
-		border: 2px solid hsla(215, 40%, 70%, 0.15);
-		object-fit: cover;
-		display: block;
-		overflow: hidden;
-	}
+
 	.online-dot {
 		position: absolute;
 		bottom: 4px;

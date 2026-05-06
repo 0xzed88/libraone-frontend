@@ -3,10 +3,7 @@
 	import { onlineUsers } from '$lib/stores/onlineUsers.svelte';
 	import type { EventPublicUser, EventUserRel } from '$lib/types/events';
 	import { formatDate, timeUntil } from '$lib/utils/time';
-	import { get } from 'svelte/store';
-	import Image from './Image.svelte';
-	import { profileUserState } from '$lib/stores/user.svelte';
-	import FallbackImage from './FallbackImage.svelte';
+	import UserAvatar from './image/UserAvatar.svelte';
 
 	const recordsMap = new Map();
 	interface Props {
@@ -24,15 +21,7 @@
 <article class="user-card">
 	<header class="user-header">
 		<div class={{ avatar: true, banned: !user.canAccessPlatform }}>
-			{#if user.avatarUrl}
-				<FallbackImage src={user.avatarUrl} alt={user.login}>
-					<Image
-						src={`https://mapl.zone01oujda.ma/image/map/${user.login}`}
-						alt={user.login}
-						headers={{ 'X-TOKEN': `${get(profileUserState)?.token}` }}
-					/>
-				</FallbackImage>
-			{/if}
+			<UserAvatar avatarUrl={user.avatarUrl} userLogin={user.login} />
 			<div class="banned-status">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

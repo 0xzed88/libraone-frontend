@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import Image from '$lib/components/Image.svelte';
+	import Image from '$lib/components/image/Image.svelte';
+	import UserAvatar from '$lib/components/image/UserAvatar.svelte';
 	import { profileUserState } from '$lib/stores/user.svelte';
 	import { get } from 'svelte/store';
 	const columns = 2;
@@ -68,11 +69,7 @@
 									{@const username = BusyPosts[postId]}
 									<div class="post" data-post={postId} data-highlighted={matchesSearch(username)}>
 										{#if username}
-											<Image
-												src={`https://mapl.zone01oujda.ma/image/map/${username}`}
-												alt={username}
-												headers={{ 'X-TOKEN': `${get(profileUserState)?.token}` }}
-											/>
+											<UserAvatar userLogin={username} />
 										{/if}
 									</div>
 								{/each}

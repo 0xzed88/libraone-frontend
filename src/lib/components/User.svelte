@@ -5,7 +5,7 @@
 	import { Client } from '$lib/graphql/client';
 	import { GetUserProfileDocument } from '$lib/graphql/generated';
 	import { intraUserState, profileUserState } from '$lib/stores/user.svelte';
-	import Image from '../../lib/components/Image.svelte';
+	import Image from '$lib/components/image/Image.svelte';
 
 	const getUserProfile = async (userId: number) => {
 		const user = await Client.request(GetUserProfileDocument, { userId });

@@ -6,11 +6,8 @@
 		GetUserGroupsByLoginDocument,
 		type UserGroupFieldsFragment
 	} from '$lib/graphql/generated';
-	import { profileUserState } from '$lib/stores/user.svelte';
-	import { get } from 'svelte/store';
-	import FallbackImage from './FallbackImage.svelte';
-	import Image from './Image.svelte';
 	import { formatDate } from '$lib/utils/time';
+	import UserAvatar from './image/UserAvatar.svelte';
 
 	const { userId }: { userId: string } = $props();
 
@@ -109,15 +106,7 @@ ${auditors.join('\n')}`;
 											data-tooltip={m.user.login}
 											class:is-captain={m.user.id === g.group.captainId}
 										>
-											{#if m.user.avatarUrl}
-												<FallbackImage src={m.user.avatarUrl}>
-													<Image
-														src={`https://mapl.zone01oujda.ma/image/map/${m.user.login}`}
-														alt={m.user.login}
-														headers={{ 'X-TOKEN': `${get(profileUserState)?.token}` }}
-													/>
-												</FallbackImage>
-											{/if}
+											<UserAvatar avatarUrl={m.user.avatarUrl} userLogin={m.user.login} />
 										</div>
 									{/if}
 								{/each}
@@ -146,15 +135,10 @@ ${auditors.join('\n')}`;
 									{#if auditor.auditor}
 										<div class="auditor-row">
 											<div class="avatar" data-tooltip={auditor.auditor.login}>
-												{#if auditor.auditor.avatarUrl}
-													<FallbackImage src={auditor.auditor.avatarUrl}>
-														<Image
-															src={`https://mapl.zone01oujda.ma/image/map/${auditor.auditor.login}`}
-															alt={auditor.auditor.login}
-															headers={{ 'X-TOKEN': `${get(profileUserState)?.token}` }}
-														/>
-													</FallbackImage>
-												{/if}
+												<UserAvatar
+													avatarUrl={auditor.auditor.avatarUrl}
+													userLogin={auditor.auditor.login}
+												/>
 											</div>
 											<span class="audit-date">{auditor.closureType}</span>
 											<span class="audit-date">{formatDate(auditor.closedAt)}</span>

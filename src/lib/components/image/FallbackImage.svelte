@@ -11,7 +11,7 @@
 	let error = $state(false);
 </script>
 
-{#if !error}
+{#if !error && src}
 	<img {src} {alt} onerror={() => (error = true)} />
 {:else}
 	{@render children()}
