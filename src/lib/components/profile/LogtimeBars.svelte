@@ -28,7 +28,7 @@
 		align-items: flex-end;
 		gap: 10px;
 		height: 120px;
-		overflow: scroll;
+		overflow: auto;
 	}
 	.bar-col {
 		flex: 1;

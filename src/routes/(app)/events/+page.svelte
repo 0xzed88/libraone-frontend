@@ -19,7 +19,7 @@
 
 <style>
 	.rootEvents {
-		overflow: scroll;
+		overflow: auto;
 		padding: 20px;
 	}
 </style>

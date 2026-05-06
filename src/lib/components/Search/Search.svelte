@@ -68,7 +68,7 @@
 			width: 100%;
 			margin-top: 5px;
 			min-height: 0;
-			overflow: scroll;
+			overflow: auto;
 			max-height: 335px;
 			border-radius: 10px;
 			border: var(--bg-3) solid 1px;
