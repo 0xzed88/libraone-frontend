@@ -105,7 +105,12 @@ ${auditors.join('\n')}`;
 						</div>
 
 						<div class="members-row">
-							<span class="row-label">Members</span>
+							<span class="row-label">
+								Members
+								<span class="member-count">
+									({g.group.members.length})
+								</span>
+							</span>
 							<div class="avatar-stack">
 								{#each g.group.members.slice(0, 8) as m (m.id)}
 									{#if m.user}
@@ -124,9 +129,6 @@ ${auditors.join('\n')}`;
 									</div>
 								{/if}
 							</div>
-							<span class="member-count">
-								{g.group.members.length} member{g.group.members.length !== 1 ? 's' : ''}
-							</span>
 						</div>
 
 						{#if g.group.auditors.length === 0}
@@ -333,6 +335,8 @@ ${auditors.join('\n')}`;
 		display: flex;
 		flex-direction: row-reverse;
 		margin-left: 4px;
+		flex-wrap: wrap;
+		justify-content: center;
 	}
 
 	.avatar {
