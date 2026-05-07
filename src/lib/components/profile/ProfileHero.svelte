@@ -6,6 +6,7 @@
 	import type { PublicUserFieldsFragment } from '$lib/graphql/generated';
 	import type { Snippet } from 'svelte';
 	import UserAvatar from '../image/UserAvatar.svelte';
+	import OnlineDot from '../OnlineDot.svelte';
 
 	interface Props {
 		active?: boolean | null;
@@ -37,7 +38,7 @@
 	<div class="avatar-wrap">
 		<UserAvatar avatarUrl={user.avatarUrl} userLogin={user.login} />
 		{#if active}
-			<span class="online-dot" data-tooltip="Active"></span>
+			<OnlineDot />
 		{/if}
 	</div>
 
@@ -116,11 +117,10 @@
 		flex-shrink: 0;
 		width: 100px;
 		height: 100px;
-		overflow: hidden;
+		width: 82px;
+		height: 82px;
 
 		:global(img) {
-			width: 82px;
-			height: 82px;
 			border-radius: 50%;
 			border: 2px solid hsla(215, 40%, 70%, 0.15);
 			object-fit: cover;
@@ -129,17 +129,6 @@
 		}
 	}
 
-	.online-dot {
-		position: absolute;
-		bottom: 4px;
-		right: 4px;
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		background: hsl(142, 70%, 45%);
-		border: 2px solid hsl(222, 47%, 6%);
-		box-shadow: 0 0 6px hsla(142, 70%, 45%, 0.6);
-	}
 	.hero-info {
 		flex: 1;
 		min-width: 200px;
