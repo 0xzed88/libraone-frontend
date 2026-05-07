@@ -1,6 +1,7 @@
 fragment UserGroupFields on group_user {
 	id
 	userLogin
+	userId
 	group {
 		captainId
 		captainLogin

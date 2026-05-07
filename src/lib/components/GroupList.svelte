@@ -7,7 +7,10 @@
 		type UserGroupFieldsFragment
 	} from '$lib/graphql/generated';
 	import { formatDate } from '$lib/utils/time';
+	import { get } from 'svelte/store';
 	import UserAvatar from './image/UserAvatar.svelte';
+	import { intraUserState } from '$lib/stores/user.svelte';
+	import PartnerExchange from '$lib/assets/svg/partner-exchange.svelte';
 
 	const { userId }: { userId: string } = $props();
 
@@ -73,10 +76,10 @@ ${auditors.join('\n')}`;
 			{#each groups as g (g.id)}
 				{@const name = projectName(g.group.path)}
 				{@const parent = projectParent(g.group.path)}
-				{@const isCaptain = Number.isInteger(+userId)
-					? g.group.captainId === +userId
-					: g.group.captainLogin === userId}
-
+				{@const isCaptain = g.group.captainId === g.userId}
+				{@const teammate =
+					g.userId !== get(intraUserState)?.userId &&
+					g.group.members.some((m) => m.user?.id === get(intraUserState)?.userId)}
 				<article class="group-card">
 					<div class="accent-bar"></div>
 
@@ -92,6 +95,11 @@ ${auditors.join('\n')}`;
 							<div class="badges">
 								{#if isCaptain}
 									<span class="badge badge-captain" data-tooltip="Group captain">⚑ Captain</span>
+								{/if}
+								{#if teammate}
+									<span class="badge badge-captain" data-tooltip="You are a member">
+										<PartnerExchange /> Teammate
+									</span>
 								{/if}
 							</div>
 						</div>
@@ -286,6 +294,10 @@ ${auditors.join('\n')}`;
 	}
 
 	.badge {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
 		font-size: 10px;
 		font-weight: 600;
 		padding: 2px 7px;
