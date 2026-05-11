@@ -1,23 +1,11 @@
 <script lang="ts">
 	import { Tabs } from 'bits-ui';
 	import Markdown from '$lib/components/Markdown.svelte';
-	import { GetEvent } from '$lib/utils/events';
-	import { page } from '$app/state';
+	import type { PageProps } from './$types';
+	import { findByPath } from '$lib/stores/objects.svelte';
 
-	const event = $derived(GetEvent(page.params.slug || ''));
-	const content = $derived(event?.attrs);
-
-	const projectAttrs = $derived(
-		content as typeof content & {
-			baseXp?: number;
-			groupMin?: number;
-			groupMax?: number;
-		}
-	);
-
-	const xpReward = $derived(projectAttrs?.baseXp);
-	const minPeople = $derived(projectAttrs?.groupMin);
-	const maxPeople = $derived(projectAttrs?.groupMax);
+	const { params }: PageProps = $props();
+	const projectPromise = $derived(findByPath('/' + params.slug));
 
 	function formatXP(xp?: number): string {
 		if (!xp) return 'N/A';
@@ -26,80 +14,78 @@
 		return `${xp} B`;
 	}
 
-	function formatMembers(min?: number | null, max?: number | null): string {
+	function formatMembers(min?: number, max?: number): string {
 		if (min === null && max === null) return 'Any size';
 		if (min === 1 && max === 1) return 'Solo';
-		if (min === 1 && max !== null) return `1–${max} members`;
+		if (min === 1 && max !== null) return `1-${max} members`;
 		if (max === null || min === max) return `${min} members`;
-		return `${min}–${max} members`;
+		return `${min}-${max} members`;
 	}
-
-	const hasProjectMeta = $derived(xpReward !== null || minPeople !== null);
 </script>
 
-{#if content}
-	<section class="markdown-body">
-		{#if hasProjectMeta}
+{#await projectPromise}
+	...loading
+{:then project}
+	{#if project}
+		{@const content = project.attrs}
+		{@const { baseXp, groupMax, groupMin } = project.attrs}
+		<section class="markdown-body">
 			<div class="project-meta">
-				{#if xpReward !== null}
-					<div class="meta-badge xp-badge">
-						<span class="meta-icon">⚡</span>
-						<div class="meta-text">
-							<span class="meta-label">XP Reward</span>
-							<span class="meta-value">{formatXP(xpReward)}</span>
-						</div>
+				<div class="meta-badge xp-badge">
+					<span class="meta-icon">⚡</span>
+					<div class="meta-text">
+						<span class="meta-label">XP Reward</span>
+						<span class="meta-value">{formatXP(baseXp)}</span>
 					</div>
-				{/if}
-				{#if minPeople !== null || maxPeople !== null}
-					<div class="meta-badge members-badge">
-						<span class="meta-icon">👥</span>
-						<div class="meta-text">
-							<span class="meta-label">Team Size</span>
-							<span class="meta-value">{formatMembers(minPeople, maxPeople)}</span>
-						</div>
+				</div>
+				<div class="meta-badge members-badge">
+					<span class="meta-icon">👥</span>
+					<div class="meta-text">
+						<span class="meta-label">Team Size</span>
+						<span class="meta-value">{formatMembers(groupMin, groupMax)}</span>
 					</div>
-				{/if}
+				</div>
 			</div>
-		{/if}
 
-		<Tabs.Root value={content.subject ? 'subject' : 'audit'} class="tabs">
-			<Tabs.List class="tablist">
+			<Tabs.Root value={content.subject ? 'subject' : 'audit'} class="tabs">
+				<Tabs.List class="tablist">
+					{#if content.subject}
+						<Tabs.Trigger class="tab" value="subject">Subject</Tabs.Trigger>
+					{/if}
+					{#if (content.validations?.length ?? 0) > 0}
+						<Tabs.Trigger class="tab" value="audit">Audit</Tabs.Trigger>
+					{/if}
+				</Tabs.List>
+
 				{#if content.subject}
-					<Tabs.Trigger class="tab" value="subject">Subject</Tabs.Trigger>
+					<Tabs.Content value="subject">
+						<div class="scroll">
+							<Markdown url={`https://learn.zone01oujda.ma${content.subject}`} />
+						</div>
+					</Tabs.Content>
 				{/if}
-				{#if (content.validations?.length ?? 0) > 0}
-					<Tabs.Trigger class="tab" value="audit">Audit</Tabs.Trigger>
+
+				{#if content.validations}
+					<Tabs.Content value="audit">
+						<div class="scroll">
+							{#each content.validations as validation, index (index)}
+								{#if validation.form}
+									<Markdown url={`https://learn.zone01oujda.ma${validation.form}`} />
+								{/if}
+								{#if validation.testImage}
+									Test Image:
+									<a href="https://{validation.testImage}" rel="external">
+										{validation.testImage}
+									</a>
+								{/if}
+							{/each}
+						</div>
+					</Tabs.Content>
 				{/if}
-			</Tabs.List>
-
-			{#if content.subject}
-				<Tabs.Content value="subject">
-					<div class="scroll">
-						<Markdown url={`https://learn.zone01oujda.ma${content.subject}`} />
-					</div>
-				</Tabs.Content>
-			{/if}
-
-			{#if content.validations}
-				<Tabs.Content value="audit">
-					<div class="scroll">
-						{#each content.validations as validation, index (index)}
-							{#if validation.form}
-								<Markdown url={`https://learn.zone01oujda.ma${validation.form}`} />
-							{/if}
-							{#if validation.testImage}
-								Test Image:
-								<a href="https://{validation.testImage}" rel="external">
-									{validation.testImage}
-								</a>
-							{/if}
-						{/each}
-					</div>
-				</Tabs.Content>
-			{/if}
-		</Tabs.Root>
-	</section>
-{/if}
+			</Tabs.Root>
+		</section>
+	{/if}
+{/await}
 
 <style>
 	.scroll {

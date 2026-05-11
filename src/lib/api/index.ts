@@ -1,5 +1,6 @@
 import { profileUserState } from '$lib/stores/user.svelte';
 import { config, endpoint } from '$lib/types/config';
+import type { GraphQLObject } from '$lib/types/object';
 import type { LoginReq, LogtimeData, MaplProfile, ProfileCreds } from '$lib/types/profile';
 import { get } from 'svelte/store';
 
@@ -17,8 +18,12 @@ export const api = {
 		}
 	}),
 	INTRA: config({
-		ORIGIN: 'https://learn.zone01oujda.ma',
-		signin: endpoint<string, ['Authorization']>('POST', '/api/auth/signin', true)
+		ORIGIN: 'https://learn.zone01oujda.ma/api',
+		signin: endpoint<string, ['Authorization']>('POST', '/auth/signin', true)
+	}),
+	PROXIED_INTRA: config({
+		ORIGIN: 'https://cors.lil-hacker.workers.dev/proxy?url=https://learn.zone01oujda.ma/api',
+		object: endpoint<GraphQLObject>('GET', '/object/oujda')
 	})
 };
 

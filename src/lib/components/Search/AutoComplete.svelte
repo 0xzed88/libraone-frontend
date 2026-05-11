@@ -1,25 +1,28 @@
 <script lang="ts">
-	import { SearchEvent } from '$lib/utils/events';
 	import { resolve } from '$app/paths';
+	import { searchProject } from '$lib/stores/objects.svelte';
 
 	let { query = $bindable<string>() } = $props();
-	let searchResult = $derived(SearchEvent(query));
+	let searchResultPromise = $derived(searchProject(query));
 </script>
 
 <form>
-	{#each searchResult as res (res)}
-		<a
-			href={resolve(`/content/${res.path}`)}
-			class="result"
-			title={res.path}
-			onclick={() => (query = res.path)}
-		>
-			{#each res.highlight as part, index (index)}
-				<span class="part">{part}</span>
-				<span class="highlight">{query}</span>
-			{/each}
-		</a>
-	{/each}
+	{#await searchResultPromise then searchResult}
+		{#each searchResult as res (res)}
+			<a
+				href={resolve(`/content/${res.path}`)}
+				class="result"
+				title={res.path}
+				onclick={() => (query = res.path)}
+			>
+				{res.name}
+				<!-- {#each res.highlight as part, index (index)}
+					<span class="part">{part}</span>
+					<span class="highlight">{query}</span>
+				{/each} -->
+			</a>
+		{/each}
+	{/await}
 </form>
 
 <style>
