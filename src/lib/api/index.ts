@@ -1,0 +1,25 @@
+import { profileUserState } from '$lib/stores/user.svelte';
+import { config, endpoint } from '$lib/types/config';
+import type { LoginReq, LogtimeData, MaplProfile, ProfileCreds } from '$lib/types/profile';
+import { get } from 'svelte/store';
+
+export const api = {
+	PROFILE: config({
+		ORIGIN: 'https://mapl.zone01oujda.ma',
+		HEADERS: () => ({ 'X-TOKEN': get(profileUserState)?.token ?? '' }),
+		login: endpoint<LoginReq, ProfileCreds>('POST', '/login'),
+		online: endpoint<Record<string, string>>('GET', '/online'),
+		profile({ login }: { login: string }) {
+			return endpoint<MaplProfile>('GET', `/profile/${login}`).call(this);
+		},
+		logtime({ start, end, login }: { start: string; end: string; login: string }) {
+			return endpoint<LogtimeData>('GET', `/logtime/${login}?start=${start}&end=${end}`).call(this);
+		}
+	}),
+	INTRA: config({
+		ORIGIN: 'https://learn.zone01oujda.ma',
+		signin: endpoint<string, ['Authorization']>('POST', '/api/auth/signin', true)
+	})
+};
+
+export default api;

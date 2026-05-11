@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { get } from 'svelte/store';
 	import FallbackImage from './FallbackImage.svelte';
 	import Image from './Image.svelte';
 	import { profileUserState } from '$lib/stores/user.svelte';
@@ -12,7 +11,7 @@
 		avatarUrl?: string | null;
 	}
 	const { avatarUrl, userLogin }: Props = $props();
-	const profileToken = $derived(get(profileUserState)?.token);
+	const profileToken = $derived($profileUserState?.token);
 
 	let error = $state(false);
 </script>

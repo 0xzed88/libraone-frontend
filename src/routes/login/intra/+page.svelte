@@ -1,4 +1,6 @@
 <script lang="ts">
+	import api from '$lib/api';
+	import { FetchError } from '$lib/api/fetch';
 	import Link from '$lib/assets/svg/link.svelte';
 	import PanelCard from '$lib/components/PanelCard.svelte';
 	import { intraUserState } from '$lib/stores/user.svelte';
@@ -25,32 +27,22 @@
 
 	const handleSubmit = async (e: SubmitEvent) => {
 		e.preventDefault();
-
 		error = '';
 		loading = true;
 
 		try {
 			const b64 = btoa(`${username}:${password}`);
+			const token = await api.INTRA.signin({ Authorization: `Basic ${b64}` });
 
-			const resp = await fetch('https://learn.zone01oujda.ma/api/auth/signin', {
-				method: 'POST',
-				headers: { Authorization: `Basic ${b64}` }
-			});
-
-			if (!resp.ok) {
-				const json = await resp.json();
-				error = json.error || 'Authentication failed';
-				return;
-			}
-
-			const token = await resp.json();
 			const payload = jwtDecode<JWTPayload>(token);
 			const userId = +payload.sub;
 
 			intraUserState.set({ jwt: token, userId });
 			history.back();
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Something went wrong';
+			if (err instanceof FetchError) {
+				error = err.cause.error || 'Authentication failed';
+			}
 		} finally {
 			loading = false;
 		}

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { api } from '$lib/api';
+	import { FetchError } from '$lib/api/fetch';
 	import Link from '$lib/assets/svg/link.svelte';
 	import PanelCard from '$lib/components/PanelCard.svelte';
 	import { profileUserState } from '$lib/stores/user.svelte';
@@ -14,23 +16,12 @@
 		loading = true;
 
 		try {
-			const loginResp = await fetch('https://mapl.zone01oujda.ma/login', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ username, password })
-			});
-
-			const creds = await loginResp.json();
-
-			if (!loginResp.ok) {
-				error = creds.detail || 'Invalid username or password';
-				return;
-			}
-
+			const creds = await api.PROFILE.login({ username, password });
 			$profileUserState = creds;
 			history.back();
-		} catch {
-			error = 'Unable to connect. Please try again.';
+		} catch (e) {
+			if (e instanceof FetchError && typeof e.cause?.detail == 'string')
+				error = e.cause?.detail || 'Invalid username or password';
 		} finally {
 			loading = false;
 		}

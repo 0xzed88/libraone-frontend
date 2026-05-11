@@ -7,7 +7,6 @@
 		type UserGroupFieldsFragment
 	} from '$lib/graphql/generated';
 	import { formatDate } from '$lib/utils/time';
-	import { get } from 'svelte/store';
 	import UserAvatar from './image/UserAvatar.svelte';
 	import { intraUserState } from '$lib/stores/user.svelte';
 	import PartnerExchange from '$lib/assets/svg/partner-exchange.svelte';
@@ -78,8 +77,8 @@ ${auditors.join('\n')}`;
 				{@const parent = projectParent(g.group.path)}
 				{@const isCaptain = g.group.captainId === g.userId}
 				{@const teammate =
-					g.userId !== get(intraUserState)?.userId &&
-					g.group.members.some((m) => m.user?.id === get(intraUserState)?.userId)}
+					g.userId !== $intraUserState?.userId &&
+					g.group.members.some((m) => m.user?.id === $intraUserState?.userId)}
 				<article class="group-card">
 					<div class="accent-bar"></div>
 

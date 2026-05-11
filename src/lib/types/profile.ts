@@ -1,3 +1,14 @@
+export interface LoginReq {
+	username: string;
+	password: string;
+}
+
+export interface ProfileCreds {
+	username: string;
+	role: string;
+	token: string;
+}
+
 export type LastSession = {
 	start: string;
 	end: string;

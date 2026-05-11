@@ -16,12 +16,12 @@
 	import { profileUserState } from '$lib/stores/user.svelte';
 	import type { LogtimeData, MaplProfile } from '$lib/types/profile';
 	import { formatDateInput } from '$lib/utils/time';
-	import { get } from 'svelte/store';
 	import type { PageProps } from './$types';
 	import ProfileStats from '$lib/components/profile/profileStats.svelte';
+	import api from '$lib/api';
 
 	const { params }: PageProps = $props();
-	const profileToken = $derived(get(profileUserState)?.token);
+	const profileToken = $derived($profileUserState?.token);
 
 	const getPublicUser = async (userId: string) => {
 		if (Number.isInteger(+userId)) {
@@ -37,34 +37,17 @@
 		return publicUser;
 	};
 
-	const getMaplProfile = async (login: string) => {
-		try {
-			const r = await fetch(`https://mapl.zone01oujda.ma/profile/${login}`, {
-				headers: { 'X-TOKEN': `${profileToken}` }
-			});
-			return r.ok ? r.json() : null;
-		} catch {
-			return null;
-		}
-	};
-
 	const getMaplLogtime = async (login: string) => {
-		try {
-			const now = new Date();
-			// eslint-disable-next-line svelte/prefer-svelte-reactivity
-			const start = new Date(now);
-			start.setMonth(start.getMonth() - 12);
-			const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-			const r = await fetch(
-				`https://mapl.zone01oujda.ma/logtime/${login}?start=${formatDateInput(start)}&end=${formatDateInput(end)}`,
-				{ headers: { 'X-TOKEN': `${profileToken}` } }
-			);
-
-			return r.ok ? r.json() : null;
-		} catch {
-			return null;
-		}
+		const now = new Date();
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
+		const start = new Date(now);
+		start.setMonth(start.getMonth() - 12);
+		const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+		return await api.PROFILE.logtime({
+			start: formatDateInput(start),
+			end: formatDateInput(end),
+			login
+		});
 	};
 
 	let user = $state<PublicUserFieldsFragment>();
@@ -76,7 +59,7 @@
 		try {
 			user = await getPublicUser(params.id);
 			if (user.login && profileToken) {
-				getMaplProfile(user.login).then((p) => (profile = p));
+				api.PROFILE.profile({ login: user.login }).then((p) => (profile = p));
 				getMaplLogtime(user.login).then((l) => (logtime = l));
 			}
 		} finally {

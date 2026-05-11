@@ -1,3 +1,4 @@
+import type { ProfileCreds } from '$lib/types/profile';
 import { writable } from 'svelte/store';
 
 const INTRA_KEY_STORAGE = 'intra_creds';
@@ -13,11 +14,6 @@ intraUserState.subscribe((v) => {
 	if (v) localStorage.setItem(INTRA_KEY_STORAGE, JSON.stringify(v));
 });
 
-export interface ProfileCreds {
-	username: string;
-	role: string;
-	token: string;
-}
 const PROFILE_KEY_STORAGE = 'profile_creds';
 const profileCreds = localStorage.getItem(PROFILE_KEY_STORAGE);
 export const profileUserState = writable<ProfileCreds | null>(

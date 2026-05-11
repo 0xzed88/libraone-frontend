@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import Image from '$lib/components/image/Image.svelte';
+	import { api } from '$lib/api';
 	import UserAvatar from '$lib/components/image/UserAvatar.svelte';
-	import { profileUserState } from '$lib/stores/user.svelte';
-	import { get } from 'svelte/store';
 	const columns = 2;
 	const campusPreffix = 'b1f1';
 	const blocks = [
@@ -22,16 +20,11 @@
 	};
 
 	const fetchOnlineUsers = async () => {
-		const onlineResp = await fetch('https://mapl.zone01oujda.ma/online', {
-			method: 'GET',
-			headers: { 'X-TOKEN': `${get(profileUserState)?.token}` }
+		const busyPosts = await api.PROFILE.online().catch(() => {
+			goto(resolve('/login/profile'), { replaceState: true });
+			return {} as Record<string, string>;
 		});
-		if (onlineResp.status === 403) {
-			goto(resolve('/login/profile'));
-			return [{}, {}];
-		}
 
-		const busyPosts: Record<string, string> = await onlineResp.json();
 		const onlineUsers: Record<string, string | undefined> = {};
 		for (const post in busyPosts) {
 			onlineUsers[busyPosts[post]] = post;
