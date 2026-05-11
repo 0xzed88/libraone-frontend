@@ -1,0 +1,16 @@
+query GetAssignedAudits {
+	audit(where: { closedAt: { _is_null: true } }, order_by: { updatedAt: asc }) {
+		private {
+			code
+		}
+		endAt
+		updatedAt
+		group {
+			path
+			captainLogin
+			members {
+				userLogin
+			}
+		}
+	}
+}

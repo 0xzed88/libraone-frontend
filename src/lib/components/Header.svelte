@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import zone01oujda from '$lib/assets/zone01oujda.png';
+	import AssignedAuditors from '$lib/components/audit/AssignedAudits.svelte';
 	import Search from './Search/Search.svelte';
 	import User from './User.svelte';
 </script>
@@ -10,7 +11,10 @@
 		<img src={zone01oujda} alt="zone01oujda-logo" id="zone01oujda-logo" />
 	</a>
 	<Search />
-	<User />
+	<div class="header-actions">
+		<AssignedAuditors />
+		<User />
+	</div>
 </header>
 
 <style>
@@ -27,5 +31,11 @@
 			width: auto;
 			height: var(--header-height);
 		}
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 10px;
 	}
 </style>

@@ -57,3 +57,35 @@ export function sessionDuration(start: string, end: string): string {
 export function formatDateInput(d: Date): string {
 	return d.toISOString().slice(0, 10);
 }
+
+export function timeRemaining(
+	start: number,
+	endAt: string | null
+): {
+	label: string;
+	urgency: 'overdue' | 'critical' | 'soon' | 'normal';
+} {
+	if (!endAt) return { label: '—', urgency: 'normal' };
+
+	const diff = new Date(endAt).getTime() - start;
+
+	if (diff <= 0) return { label: 'Overdue', urgency: 'overdue' };
+
+	const totalMinutes = Math.floor(diff / 60_000);
+	const days = Math.floor(totalMinutes / (60 * 24));
+	const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+	const minutes = totalMinutes % 60;
+
+	let label: string;
+	if (days > 0) {
+		label = `${days}d ${hours}h ${minutes}m`;
+	} else if (hours > 0) {
+		label = `${hours}h ${minutes}m`;
+	} else {
+		label = `${minutes}m`;
+	}
+
+	const urgency = diff < 60 * 60_000 ? 'critical' : diff < 24 * 60 * 60_000 ? 'soon' : 'normal';
+
+	return { label, urgency };
+}
