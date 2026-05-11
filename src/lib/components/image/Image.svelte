@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { DOMAttributes } from 'svelte/elements';
 
 	interface Props {
@@ -6,9 +7,10 @@
 		alt?: string | null;
 		headers: Record<string, string>;
 		onerror?: DOMAttributes<HTMLImageElement>['onerror'];
+		children?: Snippet;
 	}
 
-	const { src, alt, headers, onerror }: Props = $props();
+	const { src, alt, headers, onerror, children }: Props = $props();
 
 	const getImageUrl = async () => {
 		console.log(headers);
@@ -20,7 +22,7 @@
 </script>
 
 {#await getImageUrl()}
-	<!--  -->
+	{@render children?.()}
 {:then url}
 	<img src={url} {alt} {onerror} />
 {/await}

@@ -27,7 +27,9 @@
 					alt={userLogin}
 					headers={{ 'X-TOKEN': `${profileToken}` }}
 					onerror={() => (error = true)}
-				/>
+				>
+					<Person />
+				</Image>
 			{:else}
 				<Person />
 			{/if}
