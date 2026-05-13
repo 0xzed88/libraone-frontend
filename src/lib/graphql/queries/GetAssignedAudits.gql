@@ -1,5 +1,5 @@
 query GetAssignedAudits {
-	audit(where: { closedAt: { _is_null: true } }, order_by: { updatedAt: asc }) {
+	audit(where: { closedAt: { _is_null: true } }, order_by: { endAt: asc }) {
 		private {
 			code
 		}
