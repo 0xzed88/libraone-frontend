@@ -4,7 +4,7 @@ export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 export type APIConfig = {
 	ORIGIN: string;
 	HEADERS?: () => HeadersInit;
-	ERR_HANDLER?: (status: number) => void;
+	ERR_HANDLER?(status: number, body: unknown): void;
 };
 
 export function config<T extends APIConfig>(cfg: T) {
@@ -41,7 +41,7 @@ export function endpoint<Req, Res>(method: Method, path: `/${string}`, requiredH
 				return await fetchJSON<Req, Res>(method, url, this.HEADERS?.(), body);
 			} catch (error) {
 				if (error instanceof FetchError) {
-					this.ERR_HANDLER?.(error.status);
+					this.ERR_HANDLER?.(error.status, error.cause);
 					throw error;
 				}
 			}
@@ -54,7 +54,7 @@ export function endpoint<Req, Res>(method: Method, path: `/${string}`, requiredH
 			return await fetchJSON<Req, Res>(method, url, mergedHeaders, body);
 		} catch (error) {
 			if (error instanceof FetchError) {
-				this.ERR_HANDLER?.(error.status);
+				this.ERR_HANDLER?.(error.status, error.cause);
 				throw error;
 			}
 		}
