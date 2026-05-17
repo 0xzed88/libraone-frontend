@@ -1,5 +1,9 @@
-query GetAssignedAudits {
-	audit(where: { closedAt: { _is_null: true } }, order_by: { endAt: asc }) {
+query GetAssignedAudits($userId: Int) {
+	audit(
+		where: { closedAt: { _is_null: true }, auditorId: { _eq: $userId } }
+		order_by: { endAt: asc }
+	) {
+		id
 		private {
 			code
 		}

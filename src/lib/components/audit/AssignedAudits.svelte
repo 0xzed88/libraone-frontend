@@ -17,10 +17,11 @@
 		else document.removeEventListener('mousedown', handleOutsideClick);
 		return () => document.removeEventListener('mousedown', handleOutsideClick);
 	});
+	const userId = $derived($intraUserState?.userId);
 </script>
 
-{#if $intraUserState}
-	{#await Client.request(GetAssignedAuditsDocument) then data}
+{#if userId}
+	{#await Client.request(GetAssignedAuditsDocument, { userId }) then data}
 		{@const audits = data.audit}
 
 		<div class="auditors-root" bind:this={panelEl}>
