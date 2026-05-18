@@ -1,10 +1,11 @@
 <script lang="ts">
+	import api from '$lib/api';
 	import UserGroupsList from '$lib/components/GroupList.svelte';
 	import LockedOverlay from '$lib/components/LockedOverlay.svelte';
 	import LogtimeSection from '$lib/components/profile/LogtimeSection.svelte';
 	import NotFoundState from '$lib/components/profile/NotFoundState.svelte';
 	import ProfileHero from '$lib/components/profile/ProfileHero.svelte';
-	import SessionCard from '$lib/components/profile/SessionCard.svelte';
+	import ProfileStats from '$lib/components/profile/profileStats.svelte';
 	import SkeletonLoader from '$lib/components/profile/SkeletonLoader.svelte';
 	import { Client } from '$lib/graphql/client';
 	import {
@@ -12,13 +13,11 @@
 		GetUserByLoginDocument,
 		type PublicUserFieldsFragment
 	} from '$lib/graphql/generated';
-	import { fakeLastSession, fakeLogtime, fakeProfile } from '$lib/mock/mapl';
+	import { fakeLogtime, fakeProfile } from '$lib/mock/mapl';
 	import { profileUserState } from '$lib/stores/user.svelte';
 	import type { LogtimeData, MaplProfile } from '$lib/types/profile';
 	import { formatDateInput } from '$lib/utils/time';
 	import type { PageProps } from './$types';
-	import ProfileStats from '$lib/components/profile/profileStats.svelte';
-	import api from '$lib/api';
 
 	const { params }: PageProps = $props();
 	const profileToken = $derived($profileUserState?.token);
@@ -87,15 +86,6 @@
 		{#if user.login}
 			{#if !profileToken}
 				<LockedOverlay message="Link profile">
-					<SessionCard lastSession={fakeLastSession} />
-				</LockedOverlay>
-			{:else if profile?.last_session}
-				<div class="cards-grid">
-					<SessionCard lastSession={profile.last_session} />
-				</div>
-			{/if}
-			{#if !profileToken}
-				<LockedOverlay message="Link profile">
 					<LogtimeSection logtime={fakeLogtime} />
 				</LockedOverlay>
 			{:else if logtime}
@@ -120,10 +110,5 @@
 		animation: fade-up 0.4s ease both;
 		width: 100%;
 		max-width: 1200px;
-	}
-	.cards-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-		gap: 16px;
 	}
 </style>

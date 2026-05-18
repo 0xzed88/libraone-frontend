@@ -7,34 +7,30 @@
 	import type { Snippet } from 'svelte';
 	import UserAvatar from '../image/UserAvatar.svelte';
 	import OnlineDot from '../OnlineDot.svelte';
+	import Card from '$lib/components/ui/Card.svelte';
 
 	interface Props {
 		active?: boolean | null;
 		user: PublicUserFieldsFragment;
 		children?: Snippet;
 	}
+
 	const { user, active, children }: Props = $props();
 
-	// let cfNeeded = $state(false);
 	const getDiscord = async () => {
 		try {
 			const resp = await fetch(`https://profile.zone01oujda.ma/api/discord?username=${user.login}`);
 			if (resp.status === 403) {
-				// cfNeeded = true;
+				/* cfNeeded = true */
 			}
 		} catch {
-			//
+			/* noop */
 		}
 		return '-';
 	};
 </script>
 
-<div class="cd-chall">
-	<!-- <iframe  src="https://profile.zone01oujda.ma" title="profile"></iframe> -->
-</div>
-<header class="hero">
-	<div class="hero-glow"></div>
-
+<Card tag="header" glow padding="lg">
 	<div class="avatar-wrap">
 		<UserAvatar avatarUrl={user.avatarUrl} userLogin={user.login} />
 		{#if active}
@@ -42,81 +38,56 @@
 		{/if}
 	</div>
 
-	<div class="hero-info">
-		<h1 class="hero-name">
+	<div class="card-info">
+		<h1 class="card-name">
 			{#if user.firstName || user.lastName}
 				{user.firstName ?? ''} {user.lastName ?? ''}
 			{:else}
 				{user.login}
 			{/if}
 		</h1>
-
-		<p class="hero-login">@{user.login}</p>
+		<p class="card-login">@{user.login}</p>
 
 		<div class="badges">
 			{#if user.campus}
-				<span class="badge badge-campus">
-					<Location />
-					{user.campus}
-				</span>
+				<span class="badge badge-campus"><Location />{user.campus}</span>
 			{/if}
-
 			{#if user.canAccessPlatform}
 				<span class="badge badge-access" data-tooltip="Can access platform">
-					<CheckMark />
-					Platform
+					<CheckMark />Platform
 				</span>
 			{/if}
-
 			{#if user.canBeAuditor}
 				<span class="badge badge-auditor" data-tooltip="Can audit peers">
-					<Search />
-					Auditor
+					<Search />Auditor
 				</span>
 			{/if}
-
 			<span class="badge badge-auditor" data-tooltip="discord">
 				{#await getDiscord()}
 					<span>loading...</span>
 				{:then discord}
-					<Discord />
-					<span> {discord} </span>
+					<Discord /><span>{discord}</span>
 				{/await}
 			</span>
 		</div>
 	</div>
 
 	{@render children?.()}
-</header>
+</Card>
 
 <style>
-	.hero {
-		position: relative;
+	/* Card base handles: border-radius, bg, border, backdrop-filter, padding, glow */
+
+	:global(.card) {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: flex-start;
 		gap: 20px;
-		padding: 28px;
-		border-radius: 14px;
-		background: hsla(215, 35%, 10%, 0.55);
-		border: 1px solid hsla(215, 40%, 70%, 0.08);
-		backdrop-filter: blur(12px);
 	}
-	.hero-glow {
-		position: absolute;
-		top: -40px;
-		left: -40px;
-		width: 220px;
-		height: 220px;
-		border-radius: 50%;
-		background: radial-gradient(circle, hsla(210, 80%, 50%, 0.07) 0%, transparent 70%);
-		pointer-events: none;
-	}
+
 	.avatar-wrap {
 		position: relative;
 		flex-shrink: 0;
-		width: 100px;
-		height: 100px;
 		width: 82px;
 		height: 82px;
 
@@ -129,14 +100,15 @@
 		}
 	}
 
-	.hero-info {
+	.card-info {
 		flex: 1;
 		min-width: 200px;
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
 	}
-	.hero-name {
+
+	.card-name {
 		font-size: 1.45rem;
 		font-weight: 700;
 		letter-spacing: -0.03em;
@@ -144,17 +116,20 @@
 		margin: 0;
 		line-height: 1.2;
 	}
-	.hero-login {
+
+	.card-login {
 		font-size: 0.82rem;
 		color: var(--text-muted);
 		margin: 0 0 10px;
 		font-family: 'SF Mono', 'Fira Code', monospace;
 	}
+
 	.badges {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 6px;
 	}
+
 	.badge {
 		display: inline-flex;
 		align-items: center;
@@ -165,16 +140,19 @@
 		font-weight: 600;
 		letter-spacing: 0.02em;
 	}
+
 	.badge-campus {
 		background: hsla(215, 40%, 55%, 0.12);
 		border: 1px solid hsla(215, 40%, 55%, 0.2);
 		color: hsl(215, 60%, 72%);
 	}
+
 	.badge-access {
 		background: hsla(142, 60%, 40%, 0.12);
 		border: 1px solid hsla(142, 60%, 40%, 0.22);
 		color: hsl(142, 65%, 58%);
 	}
+
 	.badge-auditor {
 		background: hsla(45, 80%, 50%, 0.1);
 		border: 1px solid hsla(45, 80%, 50%, 0.2);

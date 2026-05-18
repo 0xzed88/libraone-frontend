@@ -3,30 +3,31 @@
 	import type { LogtimeData } from '$lib/types/profile';
 	import LogtimeBars from './LogtimeBars.svelte';
 	import LogtimeHeatmaps from './LogtimeHeatmaps.svelte';
+	import Card from '$lib/components/ui/Card.svelte';
 
 	interface Props {
 		logtime: LogtimeData;
 	}
 
 	const { logtime }: Props = $props();
+
 	let view: 'bars' | 'heatmaps' = $state('bars');
 
 	const months = $derived(
 		Object.entries(logtime) as [string, { total: number; logtime: Record<string, number> }][]
 	);
-
 	const maxTotal = $derived(Math.max(...months.map(([, v]) => v.total), 1));
 </script>
 
-<section class="logtime-section">
+<Card tag="section">
 	<div class="section-header">
 		<Grid />
 		Logtime Overview
 		<div class="view-switcher">
 			<button class:active={view === 'bars'} onclick={() => (view = 'bars')}>Bars</button>
-			<button class:active={view === 'heatmaps'} onclick={() => (view = 'heatmaps')}
-				>Heatmaps</button
-			>
+			<button class:active={view === 'heatmaps'} onclick={() => (view = 'heatmaps')}>
+				Heatmaps
+			</button>
 		</div>
 	</div>
 
@@ -35,16 +36,9 @@
 	{:else}
 		<LogtimeHeatmaps {months} />
 	{/if}
-</section>
+</Card>
 
 <style>
-	.logtime-section {
-		border-radius: 14px;
-		background: hsla(215, 35%, 10%, 0.45);
-		border: 1px solid hsla(215, 40%, 70%, 0.07);
-		padding: 24px;
-		backdrop-filter: blur(8px);
-	}
 	.section-header {
 		display: flex;
 		align-items: center;
@@ -65,6 +59,7 @@
 		background: hsla(215, 35%, 10%, 0.35);
 		border: 1px solid hsla(215, 40%, 70%, 0.07);
 	}
+
 	.view-switcher button {
 		border: 0;
 		background: transparent;
@@ -73,7 +68,9 @@
 		font-weight: 600;
 		padding: 6px 12px;
 		border-radius: 999px;
+		cursor: pointer;
 	}
+
 	.view-switcher button.active {
 		background: hsla(210, 80%, 55%, 0.16);
 		color: hsl(210, 80%, 65%);

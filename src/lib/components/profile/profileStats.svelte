@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LogtimeData, MaplProfile } from '$lib/types/profile';
-	import { fmtSeconds } from '$lib/utils/time';
+	import { fmtSeconds, formatDate, timePassed } from '$lib/utils/time';
 	interface Props {
 		profile?: MaplProfile;
 		logtime?: LogtimeData;
@@ -9,6 +9,7 @@
 	const { profile, logtime }: Props = $props();
 	const totalSec = (logtime: LogtimeData) =>
 		Object.values(logtime).reduce((a, v) => a + (v?.total ?? 0), 0);
+	const lastOnline = $derived(profile?.last_session?.end);
 </script>
 
 <div class="quick-stats">
@@ -37,6 +38,15 @@
 		<span class="qs-label">Total logtime</span>
 		<span class="qs-value accent">{logtime ? fmtSeconds(totalSec(logtime)) : '-'}</span>
 	</div>
+	<div class="qs-sep"></div>
+	{#if lastOnline}
+		<div class="qs-item">
+			<span class="qs-label">Last Online</span>
+			<span class="qs-value accent" data-tooltip={formatDate(lastOnline)}
+				>{timePassed(lastOnline, Date.now()).label}</span
+			>
+		</div>
+	{/if}
 </div>
 
 <style>

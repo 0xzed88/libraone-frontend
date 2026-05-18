@@ -89,3 +89,35 @@ export function timeRemaining(
 
 	return { label, urgency };
 }
+export function timePassed(
+	startAt: string | null,
+	now = Date.now()
+): {
+	label: string;
+	urgency: 'overdue' | 'critical' | 'soon' | 'normal';
+} {
+	if (!startAt) return { label: '—', urgency: 'normal' };
+
+	const start = Date.parse(startAt);
+	if (Number.isNaN(start)) return { label: '—', urgency: 'normal' };
+
+	const diff = now - start;
+
+	if (diff < 0) return { label: 'Not started', urgency: 'normal' };
+
+	const totalMinutes = Math.floor(diff / 60_000);
+	const days = Math.floor(totalMinutes / (60 * 24));
+	const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+	const minutes = totalMinutes % 60;
+
+	const label =
+		days > 0
+			? `${days}d ${hours}h ${minutes}m`
+			: hours > 0
+				? `${hours}h ${minutes}m`
+				: `${minutes}m`;
+
+	const urgency = diff < 60 * 60_000 ? 'critical' : diff < 24 * 60 * 60_000 ? 'soon' : 'normal';
+
+	return { label, urgency };
+}

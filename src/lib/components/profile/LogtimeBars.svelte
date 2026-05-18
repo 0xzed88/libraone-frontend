@@ -26,6 +26,7 @@
 
 <style>
 	.chart-viewport {
+		width: 100%;
 		overflow-x: auto;
 		padding-top: 40px;
 	}
