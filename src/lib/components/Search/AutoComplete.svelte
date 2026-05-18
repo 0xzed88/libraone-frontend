@@ -43,12 +43,4 @@
 			background: var(--bg-3);
 		}
 	}
-
-	.highlight {
-		font-weight: bolder;
-	}
-
-	.highlight:last-child {
-		display: none;
-	}
 </style>
