@@ -29,13 +29,14 @@
 
 	/* icon */
 	--icon-bg: hsla(210, 60%, 30%, 0.3);
-	--icon-border: hsla(210, 60%, 50%, 0.15);
+	--icon-border: hsla(210, 70%, 60%, 0.2);
 	--icon-color: hsl(210, 70%, 72%);
 	--icon-radius: 0.625rem;
 
 	/* text */
 	--text-link: hsl(210, 25%, 52%);
 	--text-title: hsl(210, 70%, 78%);
+	--subtitle-font-size: 0.72rem;
 
 	/* shared */
 	--transition-ui: opacity 0.2s ease, transform 0.2s ease;

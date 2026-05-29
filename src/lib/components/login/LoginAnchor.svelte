@@ -91,7 +91,7 @@
 			}
 
 			.subtitle {
-				font-size: 0.72rem;
+				font-size: var(--subtitle-font-size);
 				letter-spacing: 0.01em;
 			}
 		}

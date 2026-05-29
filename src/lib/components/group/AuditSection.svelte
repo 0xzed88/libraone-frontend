@@ -25,7 +25,11 @@
 			{#if auditor.auditor}
 				<div class="auditor-row">
 					<div class="avatar" data-tooltip={auditor.auditor.login}>
-						<UserAvatar avatarUrl={auditor.auditor.avatarUrl} userLogin={auditor.auditor.login} />
+						<UserAvatar
+							avatarUrl={auditor.auditor.avatarUrl}
+							userLogin={auditor.auditor.login}
+							banned={!auditor.auditor.canAccessPlatform}
+						/>
 					</div>
 					<span class="audit-date">{auditor.closureType}</span>
 					<span class="audit-date">{formatDate(auditor.closedAt)}</span>
@@ -85,13 +89,10 @@
 		width: 50px;
 		height: 50px;
 
-		:global(img) {
-			border: 2px solid hsl(213, 60%, 10%);
-			border-radius: 50%;
-			overflow: hidden;
-			aspect-ratio: 1/1;
-			object-fit: cover;
-		}
+		border: 2px solid hsl(213, 60%, 10%);
+		border-radius: 50%;
+		overflow: hidden;
+		aspect-ratio: 1/1;
 	}
 
 	.audit-date {

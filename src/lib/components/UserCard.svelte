@@ -1,66 +1,38 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import Block from '$lib/assets/svg/block.svelte';
 	import { onlineUsers } from '$lib/stores/onlineUsers.svelte';
 	import type { EventPublicUser, EventUserRel } from '$lib/types/events';
-	import { formatDate, timeUntil } from '$lib/utils/time';
 	import UserAvatar from './image/UserAvatar.svelte';
+	import Badge from './ui/Badge.svelte';
+	import Card from './ui/Card.svelte';
 
-	const recordsMap = new Map();
 	interface Props {
 		user: EventPublicUser;
 		eventUserRel?: EventUserRel;
-		link?: boolean;
 	}
-	let { user, eventUserRel, link = true }: Props = $props();
+	let { user, eventUserRel }: Props = $props();
 	const level = $derived(eventUserRel?.level);
 	const auditRatio = $derived(eventUserRel?.userAuditRatio);
 
 	const post = $derived(user.login ? onlineUsers[user.login] : null);
 </script>
 
-<article class="user-card">
-	<header class="user-header">
-		<div class={{ avatar: true, banned: !user.canAccessPlatform }}>
-			<UserAvatar avatarUrl={user.avatarUrl} userLogin={user.login} />
-			<div class="banned-status">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="24"
-					height="24"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<circle cx="12" cy="12" r="10" /><path d="m4.9 4.9 14.2 14.2" />
-				</svg>
-			</div>
+<Card>
+	<header>
+		<UserAvatar
+			avatarUrl={user.avatarUrl}
+			userLogin={user.login}
+			banned={!user.canAccessPlatform}
+		/>
+		<div class="meta">
+			<span class="login">{user.login}</span>
+			<span class="id">#{user.id}</span>
 		</div>
-		<div class="user-meta">
-			<div class="title-row">
-				<h2 class="login">
-					{#if link}
-						<a href={resolve(`/users/${user.id}`)} class="login-link">{user.login}</a>
-					{:else}
-						<span>{user.login}</span>
-					{/if}
-				</h2>
-				{#if post}
-					<div class="online-badge" data-tooltip="Online"></div>
-				{/if}
-				{#if level}
-					<span class="user-level" data-level={level} data-tooltip="Level {level}">
-						{level}
-					</span>
-				{/if}
-			</div>
-			<p class="id">#{user.id}</p>
-		</div>
+		<span style:margin-left="auto">
+			<Badge tooltip="Level {level}">{level}</Badge>
+		</span>
 	</header>
-
-	<dl class="details">
+	<dl>
 		<div>
 			<dt>firstName</dt>
 			<dd>{user.firstName}</dd>
@@ -75,201 +47,58 @@
 			<dd>{auditRatio ? Number(auditRatio).toFixed(2) : '_'}</dd>
 		</div>
 	</dl>
-	<div class="unavailable-banner" data-visible={user.canAccessPlatform && !user.canBeAuditor}>
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="14"
-			height="14"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-		>
-			<circle cx="12" cy="12" r="10" />
-			<line x1="15" y1="9" x2="9" y2="15" />
-			<line x1="9" y1="9" x2="15" y2="15" />
-		</svg>
-		{#if user.id}
-			{@const endAt = recordsMap.get(user.id)}
-			{#if endAt}
-				<span data-tooltip={'Unavailable until ' + formatDate(endAt)}>
-					{timeUntil(endAt.toString())}
-				</span>
-			{:else}
-				<span>Unavailable for audits</span>
-			{/if}
-		{/if}
-	</div>
-</article>
+	{#if !user.canBeAuditor}
+		<span style:width="100%">
+			<Badge>
+				<div class="unavailable">
+					<Block width="18px" height="18px" />
+					Unavailable for audits
+				</div>
+			</Badge>
+		</span>
+	{/if}
+</Card>
 
 <style>
-	@keyframes pulse-online {
-		0% {
-			box-shadow:
-				0 0 0 0 hsla(140, 80%, 55%, 0.55),
-				0 0 12px hsla(140, 80%, 55%, 0.65);
-		}
-		70% {
-			box-shadow:
-				0 0 0 8px hsla(140, 80%, 55%, 0),
-				0 0 18px hsla(140, 80%, 55%, 0.35);
-		}
-		100% {
-			box-shadow:
-				0 0 0 0 hsla(140, 80%, 55%, 0),
-				0 0 12px hsla(140, 80%, 55%, 0.65);
-		}
-	}
-
-	.online-badge {
-		width: 1rem;
-		height: 1rem;
-		border-radius: 50%;
-		background: hsl(140, 75%, 50%);
-		border: 3px solid hsl(220, 18%, 12%);
-		box-shadow:
-			0 0 0 2px hsla(140, 80%, 50%, 0.15),
-			0 0 12px hsla(140, 80%, 55%, 0.65);
-		z-index: 2;
-		animation: pulse-online 2s infinite;
-	}
-	.login-link {
-		color: inherit;
-		text-decoration: none;
-
-		&:hover {
-			color: hsl(210, 70%, 75%);
-			text-decoration: underline;
-			text-underline-offset: 3px;
-			text-decoration-thickness: 1px;
-		}
-	}
-	.unavailable-banner {
+	.unavailable {
+		width: 100%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.5rem;
-		width: 100%;
-		margin-top: 0.75rem;
-		margin-bottom: 0.5rem;
-		padding: 0.5rem 0.75rem;
-		border-radius: 0.625rem;
-		font-size: 0.75rem;
-		font-weight: 600;
-		letter-spacing: 0.02em;
-		text-transform: uppercase;
-		color: hsl(0, 70%, 65%);
-		background: hsla(0, 60%, 15%, 0.35);
-		border: 1px solid hsla(0, 50%, 40%, 0.15);
-		backdrop-filter: blur(8px);
-		box-shadow: inset 0 1px 0 hsla(0, 50%, 50%, 0.06);
-
-		opacity: 0;
-		transform: translateY(-6px) scale(0.98);
-		pointer-events: none;
-		transition:
-			opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-			transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+		gap: 5px;
+		padding: 5px 0;
 	}
-
-	.unavailable-banner[data-visible='true'] {
-		opacity: 1;
-		transform: translateY(0) scale(1);
-		pointer-events: auto;
-	}
-
-	.unavailable-banner svg {
-		flex-shrink: 0;
-		opacity: 0.85;
-	}
-	.user-card {
-		border-radius: 1rem;
-		border: 1px solid hsla(215, 40%, 70%, 0.08);
-		background: hsla(215, 40%, 70%, 0.04);
-		padding: 1.25rem;
-		box-shadow:
-			0 8px 32px rgba(0, 0, 0, 0.25),
-			inset 0 1px 0 rgba(255, 255, 255, 0.04);
-		backdrop-filter: blur(10px);
-	}
-
-	.user-header {
+	header {
 		display: flex;
 		gap: 1rem;
-		align-items: flex-start;
-	}
-
-	.avatar {
-		border-radius: 100%;
-		overflow: hidden;
-		width: 7rem;
-		position: relative;
-		aspect-ratio: 1;
-
-		&.banned {
-			:global(img) {
-				filter: grayscale(1) opacity(0.5);
-			}
-			.banned-status {
-				display: flex;
-			}
-		}
-		&:hover {
-			:global(img) {
-				filter: none;
-			}
-			.banned-status {
-				display: none;
-			}
-		}
-		.banned-status {
-			display: none;
-
-			position: absolute;
-			inset: 0;
-			align-items: center;
-			justify-content: center;
-			background: hsla(0, 70%, 20%, 0.4);
-			color: #ff4444;
-			backdrop-filter: blur(1px);
-
-			svg {
-				filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-			}
-		}
-	}
-
-	.user-meta {
-		min-width: 0;
 		width: 100%;
+
+		.meta {
+			display: flex;
+			flex-direction: column;
+
+			.id {
+				color: var(--text-muted);
+				font-size: var(--subtitle-font-size);
+			}
+		}
 	}
 
-	.title-row {
+	dl {
 		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-width: 0;
+		justify-content: space-between;
 		width: 100%;
-		/* justify-content: space-between; */
 
-		.user-level {
-			display: inline-flex;
-			align-items: center;
-			padding: 0.2rem 0.55rem;
-			border-radius: 9999px;
-			font-size: 0.7rem;
-			font-weight: 700;
-			letter-spacing: 0.04em;
+		dt {
+			color: var(--text-muted);
+			font-size: 0.72rem;
 			text-transform: uppercase;
-			border: 1px solid hsla(210, 70%, 60%, 0.2);
-			background: hsla(210, 70%, 60%, 0.12);
-			color: hsl(210, 70%, 75%);
-			white-space: nowrap;
-			flex-shrink: 0;
+			letter-spacing: 0.04em;
+		}
 
-			margin-left: auto;
+		dd {
+			font-size: 0.875rem;
+			font-weight: 500;
 		}
 	}
 
@@ -282,45 +111,4 @@
 		color: hsl(210, 20%, 90%);
 		letter-spacing: -0.01em;
 	}
-
-	.id {
-		font-size: 0.875rem;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		color: hsl(215, 15%, 50%);
-	}
-
-	.details {
-		margin-top: 1rem;
-		font-size: 0.875rem;
-		display: flex;
-		justify-content: space-between;
-
-		dt {
-			color: hsl(215, 15%, 45%);
-			font-size: 0.72rem;
-			text-transform: uppercase;
-			letter-spacing: 0.04em;
-		}
-
-		dd {
-			color: hsl(210, 15%, 78%);
-			font-weight: 500;
-		}
-	}
-
-	/* .labels {
-		margin-top: 0.5rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.label-card {
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		background: rgba(0, 0, 0, 0.2);
-		padding: 0.75rem;
-		border-radius: 0.75rem;
-	} */
 </style>

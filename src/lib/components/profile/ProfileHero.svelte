@@ -32,7 +32,11 @@
 
 <Card tag="header" glow padding="lg">
 	<div class="avatar-wrap">
-		<UserAvatar avatarUrl={user.avatarUrl} userLogin={user.login} />
+		<UserAvatar
+			avatarUrl={user.avatarUrl}
+			userLogin={user.login}
+			banned={!user.canAccessPlatform}
+		/>
 		{#if active}
 			<OnlineDot />
 		{/if}
@@ -87,17 +91,6 @@
 
 	.avatar-wrap {
 		position: relative;
-		flex-shrink: 0;
-		width: 82px;
-		height: 82px;
-
-		:global(img) {
-			border-radius: 50%;
-			border: 2px solid hsla(215, 40%, 70%, 0.15);
-			object-fit: cover;
-			display: block;
-			overflow: hidden;
-		}
 	}
 
 	.card-info {
